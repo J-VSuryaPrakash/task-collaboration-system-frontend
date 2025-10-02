@@ -5,6 +5,8 @@ import SignupPage from './pages/SignUpPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import DashBoard from './pages/DashBoard.jsx'
 import NavBar from './components/NavBar.jsx'
+import BoardPage from './pages/BoardPage.jsx'
+import TaskCard from './components/TaskCard.jsx'
 
 function App() {
 
@@ -16,8 +18,10 @@ function App() {
       {/* <LandingPage /> */}
       {/* <SignupPage /> */}
       {/* <LoginPage /> */}
-      <DashBoard />
+      {/* <DashBoard /> */}
       {/* <NavBar/> */}
+      {/* <BoardPage /> */}
+      <TaskCard />
     </>
   )
 }
