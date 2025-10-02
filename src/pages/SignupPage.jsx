@@ -1,16 +1,29 @@
 import { User, Mail, Lock, UserCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
+import { signup } from "../api/auth.api.js";
+import { useNavigate } from "react-router-dom";
 
 export default function SignupPage() {
+  
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    alert("Sign up successful! (This is a demo)");
-    console.log("Form submitted:", data);
+  const onSubmit = async (data) => {
+    const res = await signup(data);
+
+    if(res.status === 200){
+      alert('Registration successful! Please log in.');
+      reset()
+      navigate('/login');
+    }
+
   };
 
   return (
@@ -77,19 +90,19 @@ export default function SignupPage() {
               <div className="relative">
                 <UserCircle className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
-                  id="username"
+                  id="userName"
                   type="text"
-                  {...register("username", {
+                  {...register("userName", {
                     required: "Username is required",
                     minLength: { value: 3, message: "At least 3 characters" },
                   })}
                   className={`w-full pl-10 pr-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition ${
-                    errors.username ? "border-red-500" : "border-gray-300"
+                    errors.userName ? "border-red-500" : "border-gray-300"
                   }`}
                   placeholder="johndoe"
                 />
               </div>
-              {errors.username && <p className="mt-1.5 text-sm text-red-600">{errors.username.message}</p>}
+              {errors.userName && <p className="mt-1.5 text-sm text-red-600">{errors.userName.message}</p>}
             </div>
 
             {/* Email */}
@@ -154,9 +167,7 @@ export default function SignupPage() {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Already have an account?{" "}
-              <a href="#" className="text-blue-600 hover:text-blue-700 font-medium">
-                Log in here
-              </a>
+              <Link to="/login" className="text-blue-600 hover:text-blue-700 font-medium">Login here</Link>
             </p>
           </div>
         </div>

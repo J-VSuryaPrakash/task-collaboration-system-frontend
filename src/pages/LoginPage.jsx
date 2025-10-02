@@ -2,19 +2,28 @@ import { useForm } from 'react-hook-form';
 import { Mail, Lock, LogIn } from 'lucide-react';
 import React from 'react';
 import {Link} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { login } from '../api/auth.api.js';
 
 export default function LoginPage() {
+
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, isSubmitting }
   } = useForm();
 
   const onSubmit = async (data) => {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log('Login data:', data);
-    alert('Login successful! (This is a demo)');
+    
+    const res = await login(data);
+    reset();
+    if(res.status === 200){
+      navigate('/dashboard');
+    }
+
   };
 
   return (
@@ -101,9 +110,9 @@ export default function LoginPage() {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
                 Don't have an account?{' '}
-                {/* <Link to="/signup" className="text-blue-600 hover:text-blue-700 font-medium">
+                <Link to="/register" className="text-blue-600 hover:text-blue-700 font-medium">
                     Sign up
-                </Link> */}
+                </Link>
             </p>
           </div>
         </div>

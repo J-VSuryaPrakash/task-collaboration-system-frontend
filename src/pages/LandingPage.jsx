@@ -1,7 +1,11 @@
 import React from 'react';
 import { CheckCircle, FolderKanban, MessageSquare, Users } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function LandingPage() {
+
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Hero Section */}
@@ -22,10 +26,13 @@ export default function LandingPage() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-lg shadow-lg hover:shadow-xl hover:cursor-pointer transition-all duration-300">
+              <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-lg shadow-lg hover:shadow-xl hover:cursor-pointer transition-all duration-300"
+                onClick={() => navigate('/register')}
+                >
                 Sign Up
               </button>
-              <button className="bg-white hover:bg-gray-50 text-gray-800 font-semibold px-8 py-4 rounded-lg shadow-md hover:shadow-lg border border-gray-200 transition-all duration-300 hover:cursor-pointer">
+              <button className="bg-white hover:bg-gray-50 text-gray-800 font-semibold px-8 py-4 rounded-lg shadow-md hover:shadow-lg border border-gray-200 transition-all duration-300 hover:cursor-pointer"
+                onClick={() => navigate('/login')}>
                 Log In
               </button>
             </div>

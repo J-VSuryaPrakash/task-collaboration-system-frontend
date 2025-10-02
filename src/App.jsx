@@ -21,7 +21,7 @@ function App() {
       {/* <DashBoard /> */}
       {/* <NavBar/> */}
       {/* <BoardPage /> */}
-      <TaskCard />
+      {/* <TaskCard /> */}
     </>
   )
 }
