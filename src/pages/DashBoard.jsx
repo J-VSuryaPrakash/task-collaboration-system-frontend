@@ -39,7 +39,7 @@ const CreateBoardCard = ({ onClick }) => {
   );
 };
 
-export default function TrelloDashboard() {
+export default function Dashboard() {
   const [boards, setBoards] = useState([
     {
       id: 1,

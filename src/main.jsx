@@ -6,6 +6,8 @@ import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } 
 import LandingPage from './pages/LandingPage.jsx'
 import SignupPage from './pages/SignUpPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
+import DashBoard from './pages/DashBoard.jsx'
+import ProtectedRoute from './components/ProtectedRoute.jsx'
 
 
 const router = createBrowserRouter(
@@ -14,6 +16,9 @@ const router = createBrowserRouter(
       <Route path="/" element={<LandingPage />} />
       <Route path="/register" element={<SignupPage />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path='/dashboard' element={<ProtectedRoute>
+        <DashBoard />
+      </ProtectedRoute>} />
     </>
 
   )

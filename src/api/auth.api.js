@@ -5,7 +5,7 @@ const BASE_URL = import.meta.env.VITE_BASE_URL
 export const signup = async(userData) => {
     try {
 
-        const res = await axios.post(`${BASE_URL}/users/register`,userData)
+        const res = await axios.post(`${BASE_URL}/users/register`,userData,{withCredentials:true})
         return res;
         
     } catch (error) {
@@ -16,7 +16,7 @@ export const signup = async(userData) => {
 export const login = async(loginData) => {
     try {
 
-        const res = await axios.post(`${BASE_URL}/users/login`,loginData)
+        const res = await axios.post(`${BASE_URL}/users/login`,loginData,{withCredentials:true})
         return res; 
     } catch (error) {
         console.log(error);

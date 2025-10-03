@@ -19,10 +19,11 @@ export default function LoginPage() {
   const onSubmit = async (data) => {
     
     const res = await login(data);
-    reset();
+    
     if(res.status === 200){
+      reset();
       navigate('/dashboard');
-    }
+    } 
 
   };
 
