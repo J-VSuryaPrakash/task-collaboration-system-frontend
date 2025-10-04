@@ -8,6 +8,7 @@ import SignupPage from './pages/SignUpPage.jsx'
 import LoginPage from './pages/LoginPage.jsx'
 import DashBoard from './pages/DashBoard.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
+import { AuthProvider } from './context/auth.context.jsx'
 
 
 const router = createBrowserRouter(
@@ -26,6 +27,8 @@ const router = createBrowserRouter(
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>    
   </StrictMode>,
 )

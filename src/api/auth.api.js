@@ -22,3 +22,13 @@ export const login = async(loginData) => {
         console.log(error);
     }
 }
+
+export const getUser = async() => {
+    try {
+        const res = axios.get(`${BASE_URL}/users/get-user`, { withCredentials: true })
+        return res;
+    } catch (error) {
+        console.log(error);
+    }
+
+}

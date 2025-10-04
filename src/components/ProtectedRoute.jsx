@@ -4,6 +4,8 @@ import { Navigate } from "react-router-dom";
 export default function ProtectedRoute({ children }) {
     const { user } = useAuth();
     
+    console.log("User in protected route: ",user)
+
     if(user === null) {
         return <div>Loading...</div>;
     }
