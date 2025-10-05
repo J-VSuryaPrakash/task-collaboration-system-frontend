@@ -13,7 +13,7 @@ export function AuthProvider({ children }) {
 
     async function fetchUser(){
       const user = await getUser();
-      setUser(user.data.data.user)
+      setUser(user.data.data.user + "{authProvider}")
     }   
 
     fetchUser();

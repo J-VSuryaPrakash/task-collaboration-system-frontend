@@ -1,28 +1,15 @@
-import React, { useState } from 'react';
-import { Plus, Grid3x3 } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import NavBar from '../components/NavBar';
+import { fetchProjects } from '../api/project.api';
 
-const BoardCard = ({ title, background, onClick }) => {
+const BoardCard = ({ title, onClick }) => {
   return (
     <div
       onClick={onClick}
-      className="relative w-60 h-32 rounded-lg cursor-pointer overflow-hidden group transition-all hover:opacity-90"
-      style={{
-        background: background.type === 'gradient' 
-          ? background.value 
-          : 'transparent'
-      }}
+      className="relative w-60 h-32 rounded-lg cursor-pointer overflow-hidden group transition-all hover:opacity-90 bg-black"
     >
-      {background.type === 'image' && (
-        <img 
-          src={background.value} 
-          alt={title}
-          className="w-full h-full object-cover"
-        />
-      )}
-      <div className="absolute inset-0 bg-black bg-opacity-20 group-hover:bg-opacity-30 transition-all" />
       <div className="absolute bottom-0 left-0 right-0 p-4">
-        <h3 className="text-white font-semibold text-sm">{title}</h3>
+        <h3 className="text-white font-semibold text-2xl">{title}</h3>
       </div>
     </div>
   );
@@ -40,24 +27,18 @@ const CreateBoardCard = ({ onClick }) => {
 };
 
 export default function Dashboard() {
-  const [boards, setBoards] = useState([
-    {
-      id: 1,
-      title: 'My Trello board',
-      background: {
-        type: 'gradient',
-        value: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-      }
-    },
-    {
-      id: 2,
-      title: 'Testing',
-      background: {
-        type: 'image',
-        value: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop'
-      }
+  const [boards, setBoards] = useState([]);
+
+  useEffect(() => {
+
+    const fetchBoards = async() => {
+      const projects = await fetchProjects() 
+      setBoards(projects.data || []);
     }
-  ]);
+
+    fetchBoards();
+
+  },[])
 
   const handleBoardClick = (id) => {
     console.log('Board clicked:', id);
@@ -88,8 +69,7 @@ export default function Dashboard() {
             {boards.map((board) => (
               <BoardCard
                 key={board.id}
-                title={board.title}
-                background={board.background}
+                title={board.projectName}
                 onClick={() => handleBoardClick(board.id)}
               />
             ))}
