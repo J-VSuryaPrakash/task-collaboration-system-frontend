@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import NavBar from '../components/NavBar';
 import { fetchProjects } from '../api/project.api';
+import { useNavigate } from 'react-router-dom';
 
 const BoardCard = ({ title, onClick }) => {
   return (
@@ -27,6 +28,10 @@ const CreateBoardCard = ({ onClick }) => {
 };
 
 export default function Dashboard() {
+
+  const navigate = useNavigate();
+
+
   const [boards, setBoards] = useState([]);
 
   useEffect(() => {
@@ -40,18 +45,21 @@ export default function Dashboard() {
 
   },[])
 
-  const handleBoardClick = (id) => {
-    console.log('Board clicked:', id);
-  };
+  const handleBoardClick = useCallback((projectId) => {
+
+    navigate(`/board/${projectId}`);
+
+  },[])
 
   const handleCreateBoard = () => {
     console.log('Create new board');
   };
 
   return (
+
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-        {/* Navbar */}
-            <NavBar />
+      {/* Navbar */}
+        <NavBar />
 
       {/* Sidebar */}
       <div className="flex">

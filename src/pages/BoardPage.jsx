@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Plus, MoreHorizontal, X } from 'lucide-react';
+import { fetchTasks } from '../api/tasks.api';
+import { useParams } from 'react-router-dom';
 
 export default function BoardPage() {
   const [boardTitle, setBoardTitle] = useState('TMS');
@@ -8,7 +10,39 @@ export default function BoardPage() {
     { id: 2, title: 'In Progress', cards: [] },
     { id: 3, title: 'Done', cards: [] }
   ]);
+
   const [newCardInputs, setNewCardInputs] = useState({});
+
+  const {projectId} = useParams();
+
+  useEffect(() => {
+
+    async function fetchAllTasks(projectId){
+
+      const allTasks = await fetchTasks(projectId)
+
+      const todo = [];
+      const inProgress = [];
+      const done = [];
+
+      allTasks.data.forEach(task => {
+
+        if(task.status === 'Todo'){
+          todo.push(task)
+        }
+        else if(task.status === 'In Progress'){
+          inProgress.push(task)
+        }
+        else{
+          done.push(task)
+        }
+
+      });
+    }
+
+    fetchAllTasks(projectId)
+
+  },[projectId])
 
   const addList = () => {
     const newList = {

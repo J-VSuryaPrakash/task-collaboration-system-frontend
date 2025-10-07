@@ -9,19 +9,22 @@ import LoginPage from './pages/LoginPage.jsx'
 import DashBoard from './pages/DashBoard.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import { AuthProvider } from './context/auth.context.jsx'
+import BoardPage from './pages/BoardPage.jsx'
 
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
+    <Route>
       <Route path="/" element={<LandingPage />} />
       <Route path="/register" element={<SignupPage />} />
       <Route path="/login" element={<LoginPage />} />
-      <Route path='/dashboard' element={<ProtectedRoute>
-        <DashBoard />
-      </ProtectedRoute>} />
+      <Route element={<ProtectedRoute />}>
+        <Route path="/dashboard" element={<DashBoard />} />
+        <Route path="/board/:projectId" element={<BoardPage />} />
+      </Route>
+    </Route>
     </>
-
   )
 )
 
