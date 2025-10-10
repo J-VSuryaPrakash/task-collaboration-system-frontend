@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import { Plus, MoreHorizontal, X } from 'lucide-react';
 import { fetchTasks } from '../api/tasks.api';
 import { useParams } from 'react-router-dom';
+import TaskCard from '../components/TaskCard';
 
 export default function BoardPage() {
-  const [boardTitle, setBoardTitle] = useState('TMS');
-  const [lists, setLists] = useState([
-    { id: 1, title: 'To Do', cards: [] },
-    { id: 2, title: 'In Progress', cards: [] },
-    { id: 3, title: 'Done', cards: [] }
-  ]);
+  
+  const {projectId, projectName} = useParams();
+
+  const [todo, setTodo] = useState([]);
+  const [inProgress, setInProgress] = useState([]);
+  const [done, setDone] = useState([]);
 
   const [newCardInputs, setNewCardInputs] = useState({});
-
-  const {projectId} = useParams();
+  const [openTask,setOpenTask] = useState(false)
 
   useEffect(() => {
 
@@ -21,37 +21,51 @@ export default function BoardPage() {
 
       const allTasks = await fetchTasks(projectId)
 
-      const todo = [];
-      const inProgress = [];
-      const done = [];
+      const todoTasks = [];
+      const inProgressTasks = [];
+      const doneTasks = [];
 
       allTasks.data.forEach(task => {
 
         if(task.status === 'Todo'){
-          todo.push(task)
+          todoTasks.push(task)
         }
         else if(task.status === 'In Progress'){
-          inProgress.push(task)
+          inProgressTasks.push(task)
         }
         else{
-          done.push(task)
+          doneTasks.push(task)
         }
 
       });
+
+      setTodo(todoTasks)
+      setInProgress(inProgressTasks)
+      setDone(doneTasks)
     }
 
     fetchAllTasks(projectId)
 
   },[projectId])
 
-  const addList = () => {
-    const newList = {
-      id: Date.now(),
-      title: 'New List',
-      cards: []
-    };
-    setLists([...lists, newList]);
-  };
+  
+    console.log("Todo Tasks:", todo);
+    console.log("In Progress Tasks:", inProgress);
+    console.log("Done Tasks:", done);
+
+    const [lists, setLists] = useState([
+      { id: 1, title: 'To Do', cards: todo },
+      { id: 2, title: 'In Progress', cards: inProgress },
+      { id: 3, title: 'Done', cards: done }
+    ]);
+
+    useEffect(() => {
+      setLists([
+        { id: 1, title: 'To Do', cards: todo },
+        { id: 2, title: 'In Progress', cards: inProgress },
+        { id: 3, title: 'Done', cards: done }
+      ]);
+    }, [todo, inProgress, done]);
 
   const addCard = (listId) => {
     const cardText = newCardInputs[listId];
@@ -73,10 +87,6 @@ export default function BoardPage() {
     ));
   };
 
-  const deleteList = (listId) => {
-    setLists(lists.filter(list => list.id !== listId));
-  };
-
   const updateListTitle = (listId, newTitle) => {
     setLists(lists.map(list =>
       list.id === listId ? { ...list, title: newTitle } : list
@@ -84,15 +94,13 @@ export default function BoardPage() {
   };
 
   return (
+
     <div className="min-h-screen bg-gradient-to-br from-slate-800 via-blue-700 to-slate-900 p-6">
       {/* Header */}
       <div className="mb-6">
-        <input
-          type="text"
-          value={boardTitle}
-          onChange={(e) => setBoardTitle(e.target.value)}
-          className="text-2xl font-bold bg-transparent text-white border-none outline-none px-3 py-1 rounded transition-colors hover:cursor-pointer hover:bg-gray-600"
-        />
+        <p className="text-2xl font-bold text-white px-3 py-1 rounded">
+          {projectName}
+        </p>
       </div>
 
       {/* Board Lists */}
@@ -121,10 +129,11 @@ export default function BoardPage() {
                 {list.cards.map(card => (
                   <div
                     key={card.id}
+                    onClick={ () => {setOpenTask(true)} }
                     className="bg-slate-800 p-3 rounded shadow group cursor-pointer transition-colors mx-0.5 my-1 hover:border hover:border-white"
                   >
                     <div className="flex items-start justify-between">
-                      <p className="text-white text-sm flex-1">{card.text}</p>
+                      <p className="text-white text-sm flex-1">{card.title}</p>
                       <button
                         onClick={() => deleteCard(list.id, card.id)}
                         className="text-slate-400 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity ml-2"
@@ -178,16 +187,8 @@ export default function BoardPage() {
           </div>
         ))}
 
-        {/* Add List Button */}
-        <div className="flex-shrink-0 w-72">
-          <button
-            onClick={addList}
-            className="w-full bg-white/10 hover:bg-white/20 backdrop-blur text-white p-3 rounded-lg flex items-center gap-2 transition-colors"
-          >
-            <Plus size={18} />
-            <span className="font-medium">Add another list</span>
-          </button>
-        </div>
+        {openTask && <TaskCard closeTask = {setOpenTask}/>}
+
       </div>
     </div>
   );

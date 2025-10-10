@@ -10,6 +10,7 @@ import DashBoard from './pages/DashBoard.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 import { AuthProvider } from './context/auth.context.jsx'
 import BoardPage from './pages/BoardPage.jsx'
+import TaskCard from './components/TaskCard.jsx'
 
 
 const router = createBrowserRouter(
@@ -21,7 +22,7 @@ const router = createBrowserRouter(
       <Route path="/login" element={<LoginPage />} />
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<DashBoard />} />
-        <Route path="/board/:projectId" element={<BoardPage />} />
+        <Route path="/board/:projectId/:projectName" element={<BoardPage />} />
       </Route>
     </Route>
     </>
@@ -33,5 +34,6 @@ createRoot(document.getElementById('root')).render(
     <AuthProvider>
       <RouterProvider router={router} />
     </AuthProvider>    
+    {/* <TaskCard/> */}
   </StrictMode>,
 )

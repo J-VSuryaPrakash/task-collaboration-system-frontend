@@ -1,10 +1,10 @@
 import { useState } from "react";
+import { X } from "lucide-react";
 
-export default function TaskCard() {
+export default function TaskCard({closeTask}) {
+  
   const [title, setTitle] = useState("My Task");
-  const [isEditingTitle, setIsEditingTitle] = useState(false);
-
-  const [description, setDescription] = useState("Click to add description...");
+  const [description, setDescription] = useState("");
   const [isEditingDesc, setIsEditingDesc] = useState(false);
 
   const [comments, setComments] = useState([]);
@@ -16,65 +16,57 @@ export default function TaskCard() {
     setComment("");
   };
 
-  const handleTitleSave = () => {
-    setIsEditingTitle(false);
-    if (title.trim() === "") {
-      setTitle("Untitled Task");
-    }
-  };
-
   const handleDescSave = () => {
     setIsEditingDesc(false);
-    if (description.trim() === "") {
-      setDescription("Click to add description...");
-    }
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto mt-6 p-6 bg-gray-900 text-white rounded-lg shadow space-y-6">
+
+    <div className="fixed top-0 left-0 w-screen h-screen bg-gray-600 opacity-95 flex justify-center items-center z-10">
+
+      <div className="w-full max-w-7xl mx-auto mt-6 p-6 bg-gray-950 text-white rounded-lg shadow space-y-6">
       {/* Title */}
-      <div>
-        {isEditingTitle ? (
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            onBlur={handleTitleSave}
-            onKeyDown={(e) => e.key === "Enter" && handleTitleSave()}
-            autoFocus
-            className="w-full text-2xl font-semibold bg-gray-800 border border-gray-600 px-3 py-2 rounded-md focus:outline-none focus:border-blue-500"
-          />
-        ) : (
+      <div className="flex items-center justify-between">
           <h2
-            className="text-2xl font-semibold cursor-pointer hover:border-b border-gray-500 inline-block"
-            onClick={() => setIsEditingTitle(true)}
+            className="text-2xl font-semibold inline-block"
           >
             {title}
           </h2>
-        )}
+        <button
+          onClick={() => {closeTask(false)}}
+          className="text-slate-400 hover:text-white transition-colors hover:cursor-pointer"
+        >
+          <X size={20} />
+        </button>
       </div>
 
       <div className="flex flex-col md:flex-row gap-6">
         {/* Description */}
         <div className="flex-1">
           <label className="block text-lg mb-3 font-medium">Description</label>
-          {isEditingDesc ? (
-            <textarea               
-              type="text"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              onBlur={handleDescSave}
-              onKeyDown={(e) => e.key === "Enter" && handleDescSave()}
-              autoFocus
-              className="w-full px-3 py-2 rounded-md bg-gray-800 border border-gray-600 focus:outline-none focus:border-blue-500" />
+            {isEditingDesc ? (
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Click to add a description..."
+                autoFocus
+                className="w-full px-3 py-2 rounded-md bg-gray-800 border border-gray-600 focus:outline-none focus:border-blue-500 resize-none min-h-32"
+              />
             ) : (
-            <p
-              onClick={() => setIsEditingDesc(true)}
-              className="px-3 py-2 rounded-md bg-gray-800 border border-gray-600 text-gray-300 cursor-pointer hover:border-blue-500"
+              <div
+                onClick={() => setIsEditingDesc(true)}
+                className="w-full px-3 py-2 rounded-md bg-gray-800 border border-gray-600 text-gray-400 cursor-text min-h-32 flex items-start"
+              >
+                {description || "Click to add a description..."}
+              </div>
+            )}
+
+            <button
+              onClick={handleDescSave} 
+              className="px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 transition text-white text-sm mt-4 hover:cursor-pointer"
             >
-              {description}
-            </p>
-          )}
+              Save
+            </button>
         </div>
 
         {/* Comments */}
@@ -108,5 +100,9 @@ export default function TaskCard() {
         </div>
       </div>
     </div>
+
+    </div>
+
+
   );
 }

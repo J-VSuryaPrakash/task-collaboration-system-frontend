@@ -45,9 +45,9 @@ export default function Dashboard() {
 
   },[])
 
-  const handleBoardClick = useCallback((projectId) => {
+  const handleBoardClick = useCallback((projectId,projectName) => {
 
-    navigate(`/board/${projectId}`);
+    navigate(`/board/${projectId}/${projectName}`);
 
   },[])
 
@@ -78,7 +78,7 @@ export default function Dashboard() {
               <BoardCard
                 key={board.id}
                 title={board.projectName}
-                onClick={() => handleBoardClick(board.id)}
+                onClick={() => handleBoardClick(board.id,board.projectName)}
               />
             ))}
             <CreateBoardCard onClick={handleCreateBoard} />
