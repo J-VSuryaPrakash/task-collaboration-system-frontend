@@ -11,6 +11,7 @@ import ProtectedRoute from './components/ProtectedRoute.jsx'
 import { AuthProvider } from './context/auth.context.jsx'
 import BoardPage from './pages/BoardPage.jsx'
 import TaskCard from './components/TaskCard.jsx'
+import { TaskContextProvider } from './context/task.context.jsx'
 
 
 const router = createBrowserRouter(
@@ -32,7 +33,9 @@ const router = createBrowserRouter(
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <AuthProvider>
+      <TaskContextProvider>
       <RouterProvider router={router} />
+      </TaskContextProvider>
     </AuthProvider>    
     {/* <TaskCard/> */}
   </StrictMode>,

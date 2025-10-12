@@ -1,8 +1,29 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { X } from "lucide-react";
+import { useTask } from "../context/task.context.jsx";
+import { getTaskById } from "../api/tasks.api.js";
+import { updateTask } from "../api/tasks.api.js";
 
-export default function TaskCard({closeTask}) {
+export default function TaskCard() {
   
+  const {selectedTaskId, openTask, setOpenTask} = useTask();
+  
+  if(!openTask) return null;
+
+  useEffect(() => {
+
+    async function fetchTaskDetails(selectedTaskId){
+
+      const taskDetails = await getTaskById(selectedTaskId);
+      setTitle(taskDetails.data.title)
+      setDescription(taskDetails.data.taskDescription || "")
+    }
+
+    fetchTaskDetails(selectedTaskId)
+
+  },[selectedTaskId])
+
+
   const [title, setTitle] = useState("My Task");
   const [description, setDescription] = useState("");
   const [isEditingDesc, setIsEditingDesc] = useState(false);
@@ -10,14 +31,27 @@ export default function TaskCard({closeTask}) {
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
 
+
   const handleAddComment = () => {
     if (comment.trim() === "") return;
     setComments([...comments, comment]);
     setComment("");
+
+    // need have the comment in DB
+
   };
 
   const handleDescSave = () => {
+    
     setIsEditingDesc(false);
+    async function updateTaskDescription(){
+    
+      const res = await updateTask(selectedTaskId, description);
+      // need to handle the response here and error
+
+    }
+    updateTaskDescription()
+
   };
 
   return (
@@ -33,7 +67,7 @@ export default function TaskCard({closeTask}) {
             {title}
           </h2>
         <button
-          onClick={() => {closeTask(false)}}
+          onClick={() => {setOpenTask(false)}}
           className="text-slate-400 hover:text-white transition-colors hover:cursor-pointer"
         >
           <X size={20} />
