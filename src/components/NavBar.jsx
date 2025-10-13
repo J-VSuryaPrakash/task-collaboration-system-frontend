@@ -1,7 +1,15 @@
 import React from 'react'
+import { logout } from '../api/auth.api'
 
 export default function NavBar() {
-  return (
+
+    const logoutUser = async() => {
+        const res = await logout();
+        console.log(res);
+        window.location.reload();
+    }
+
+    return (
     <>
         <header className="bg-gray-900 bg-opacity-50 backdrop-blur-sm border-b border-gray-800">
             <div className="px-6 py-3 flex items-center justify-between">
@@ -13,8 +21,11 @@ export default function NavBar() {
                     <span className="text-white font-semibold">Task Management System</span>
                 </div>
             </div>
-            <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
-                <span className="text-white text-xs font-bold">VP</span>
+            <div className="w-12 h-8 bg-orange-500 flex items-center justify-center rounded-lg"
+                onClick={() => {logoutUser()}}>
+                <button 
+                    className="text-white text-xs font-bold hover:cursor-pointer"
+                >Logout</button>
             </div>
             </div>
         </header>

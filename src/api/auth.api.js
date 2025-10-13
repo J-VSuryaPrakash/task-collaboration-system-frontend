@@ -32,3 +32,13 @@ export const getUser = async() => {
     }
 
 }
+
+export const logout = async() => {
+    try {
+        const res = await axios.post(`${BASE_URL}/users/logout`, {}, { withCredentials: true }) 
+        return res.message;
+    }
+    catch (error) {
+        console.log(error);
+    }
+}
