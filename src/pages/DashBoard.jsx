@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 import NavBar from '../components/NavBar';
 import { fetchProjects } from '../api/project.api';
 import { useNavigate } from 'react-router-dom';
+import NewBoard from '../components/NewBoard';
+import { createProject } from '../api/project.api';
 
 const BoardCard = ({ title, onClick }) => {
   return (
@@ -28,11 +30,12 @@ const CreateBoardCard = ({ onClick }) => {
 };
 
 export default function Dashboard() {
-
+  
   const navigate = useNavigate();
 
 
   const [boards, setBoards] = useState([]);
+  const [createBoard, setCreateBoard] = useState(false);
 
   useEffect(() => {
 
@@ -52,7 +55,7 @@ export default function Dashboard() {
   },[])
 
   const handleCreateBoard = () => {
-    console.log('Create new board');
+    setCreateBoard(true);
   };
 
   return (
@@ -84,6 +87,7 @@ export default function Dashboard() {
             <CreateBoardCard onClick={handleCreateBoard} />
           </div>
         </main>
+        {createBoard && <NewBoard onClose={setCreateBoard}/>}
       </div>
     </div>
   );

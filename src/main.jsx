@@ -12,6 +12,7 @@ import { AuthProvider } from './context/auth.context.jsx'
 import BoardPage from './pages/BoardPage.jsx'
 import TaskCard from './components/TaskCard.jsx'
 import { TaskContextProvider } from './context/task.context.jsx'
+import NewBoard from './components/NewBoard.jsx'
 
 
 const router = createBrowserRouter(
@@ -38,5 +39,6 @@ createRoot(document.getElementById('root')).render(
       </TaskContextProvider>
     </AuthProvider>    
     {/* <TaskCard/> */}
+    {/* <NewBoard/> */}
   </StrictMode>,
 )

@@ -12,3 +12,18 @@ export const fetchProjects = async() => {
         console.log(error);
     }
 }
+
+export const createProject = async(projectName) => {
+    try {
+
+        const res = await axios.post(`${BASE_URL}/projects/add-project`,
+            {projectName},
+            {withCredentials: true}
+        )
+
+        return res;
+    }
+    catch(error){
+        console.log(error);
+    }
+}
