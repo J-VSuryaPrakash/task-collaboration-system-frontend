@@ -14,7 +14,7 @@ export default function BoardPage() {
   const [done, setDone] = useState([]);
   const [status, setStatus] = useState('');
   const [newCardInputs, setNewCardInputs] = useState({});
-  
+  const [loading, setLoading] = useState(true);
   const {openTask,setOpenTask,selectedTaskId,setSelectedTaskId} = useTask();
 
   useEffect(() => {
@@ -47,6 +47,7 @@ export default function BoardPage() {
     }
 
     fetchAllTasks(projectId)
+    setLoading(false);
 
   },[projectId])
 
@@ -74,7 +75,7 @@ export default function BoardPage() {
     else if(listId === 3){setStatus('Done')}
 
     async function assignTask(){
-
+      console.log("Assign task method called")
       const res = await addTask(projectId, cardText, status)
       console.log("Added Task: ",res)
       setLists(lists.map(list => 
@@ -112,6 +113,18 @@ export default function BoardPage() {
       list.id === listId ? { ...list, title: newTitle } : list
     ));
   };
+
+  if (loading) {
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gray-900">
+      <div className="flex flex-col items-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-3"></div>
+        <p className="text-gray-300">Loading ...</p>
+      </div>
+    </div>
+  );
+}
+
 
   return (
 

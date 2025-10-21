@@ -1,14 +1,17 @@
 import { useForm } from 'react-hook-form';
 import { Mail, Lock, LogIn } from 'lucide-react';
 import React from 'react';
+import { useState } from 'react';
 import {Link} from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../api/auth.api.js';
+import { useAuth } from '../context/auth.context.jsx';
 
 export default function LoginPage() {
 
   const navigate = useNavigate();
-
+  const [errorMessage, setErrorMessage] = useState('');
+  const {setUser} = useAuth();
   const {
     register,
     handleSubmit,
@@ -18,12 +21,18 @@ export default function LoginPage() {
 
   const onSubmit = async (data) => {
     
-    const res = await login(data);
-    
-    if(res.status === 200){
-      reset();
-      navigate('/dashboard');
-    } 
+    try {
+      const res = await login(data);
+      console.log("Response:",res);
+      
+      if(res.status === 200){
+        reset();
+        setUser(res.data.data.user)
+        navigate('/dashboard');
+      } 
+    } catch (error) {
+      setErrorMessage(error.message);
+    }
 
   };
 
@@ -97,7 +106,7 @@ export default function LoginPage() {
                 <p className="mt-1.5 text-sm text-red-600">{errors.password.message}</p>
               )}
             </div>
-
+            {errorMessage && (<p className="mt-1.5 text-sm text-red-600">{errorMessage}</p>)}  
             <button
               type="button"
               onClick={handleSubmit(onSubmit)}
