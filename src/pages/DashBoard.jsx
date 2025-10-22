@@ -1,16 +1,27 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import NavBar from '../components/NavBar';
-import { fetchProjects } from '../api/project.api';
+import { deleteProject, fetchProjects } from '../api/project.api';
 import { useNavigate } from 'react-router-dom';
 import NewBoard from '../components/NewBoard';
 import { createProject } from '../api/project.api';
+import {X} from 'lucide-react'
 
-const BoardCard = ({ title, onClick }) => {
+const BoardCard = ({ title, onClick, onDelete }) => {
+
   return (
     <div
       onClick={onClick}
       className="relative w-60 h-32 rounded-lg cursor-pointer overflow-hidden group transition-all hover:opacity-90 bg-black"
     >
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onDelete()
+        }}
+        className="absolute top-2 right-2 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-red-600"
+      >
+        <X size={20} strokeWidth={2.5} /> 
+      </button>
       <div className="absolute bottom-0 left-0 right-0 p-4">
         <h3 className="text-white font-semibold text-2xl">{title}</h3>
       </div>
@@ -60,6 +71,11 @@ export default function Dashboard() {
     setCreateBoard(true);
   };
 
+  const handleDeleteBoard = async (id) => {
+    const res = await deleteProject(id)
+    
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-900">
@@ -95,6 +111,7 @@ export default function Dashboard() {
                 key={board.id}
                 title={board.projectName}
                 onClick={() => handleBoardClick(board.id,board.projectName)}
+                onDelete={() => handleDeleteBoard(board.id)}
               />
             ))}
             <CreateBoardCard onClick={handleCreateBoard} />

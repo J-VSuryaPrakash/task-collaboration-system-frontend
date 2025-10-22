@@ -27,3 +27,18 @@ export const createProject = async(projectName) => {
         console.log(error);
     }
 }
+
+export const deleteProject = async (projectId) => {
+
+    try {
+        const res = await axios.delete(`${BASE_URL}/projects/delete-project`,
+            {
+                data: {projectId},
+                withCredentials: true
+            }
+        )
+        return res;
+    } catch (error) {
+        console.log(error)
+    }
+}
