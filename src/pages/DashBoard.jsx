@@ -72,9 +72,14 @@ export default function Dashboard() {
   };
 
   const handleDeleteBoard = async (id) => {
-    const res = await deleteProject(id)
-    
-  }
+    try {
+      const res = await deleteProject(id);
+      setBoards(prevBoards => prevBoards.filter(board => board.id !== id));
+    }
+    catch (error) {
+      console.error("Error deleting project:", error);
+    }
+  };  
 
   if (loading) {
     return (
