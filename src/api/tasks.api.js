@@ -13,7 +13,9 @@ export const addTask = async (projectId, title, status) => {
     );
 
     return res.data.data;
-  } catch (error) {}
+  } catch (error) {
+    console.error("Error adding task:", error);
+  }
 };
 
 export const fetchTasks = async (projectId, projectName) => {

@@ -23,7 +23,6 @@ export default function LoginPage() {
     
     try {
       const res = await login(data);
-      console.log("Response:",res);
       
       if(res.status === 200){
         reset();

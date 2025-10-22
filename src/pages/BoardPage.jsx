@@ -12,7 +12,6 @@ export default function BoardPage() {
   const [todo, setTodo] = useState([]);
   const [inProgress, setInProgress] = useState([]);
   const [done, setDone] = useState([]);
-  const [status, setStatus] = useState('');
   const [newCardInputs, setNewCardInputs] = useState({});
   const [loading, setLoading] = useState(true);
   const {openTask,setOpenTask,selectedTaskId,setSelectedTaskId} = useTask();
@@ -28,7 +27,7 @@ export default function BoardPage() {
       const doneTasks = [];
 
       allTasks.data.forEach(task => {
-        console.log("task:\n",task)
+        
         if(task.status === 'Todo'){
           todoTasks.push(task)
         }
@@ -69,15 +68,15 @@ export default function BoardPage() {
   const addCard = (listId) => {
     const cardText = newCardInputs[listId];
     if (!cardText || !cardText.trim()) return;
-    console.log("Listid: ",listId,"cardText: ",cardText)
-    if(listId === 1){setStatus('Todo')}
-    else if(listId === 2){setStatus('In Progress')}
-    else if(listId === 3){setStatus('Done')}
+    let status = '';
+    if(listId === 1){status = 'Todo'}
+    else if(listId === 2){status = 'In Progress'}
+    else if(listId === 3){status = 'Done'}
 
     async function assignTask(){
-      console.log("Assign task method called")
+
       const res = await addTask(projectId, cardText, status)
-      console.log("Added Task: ",res)
+
       setLists(lists.map(list => 
         list.id === listId 
           ? { ...list, cards: [...list.cards, { id: res.id, title: res.title }] }
@@ -86,14 +85,13 @@ export default function BoardPage() {
     }
 
     assignTask()
-
+    .then(() => {
+      setNewCardInputs({ ...newCardInputs, [listId]: '' });
+    })   
     
-    setNewCardInputs({ ...newCardInputs, [listId]: '' });
   };
 
   const deleteCard = (listId, cardId) => {
-
-    console.log("Listid: ",listId,"cardId: ",cardId)
 
     async function deleteCard(){
       const res = await deleteTask(cardId);
