@@ -126,26 +126,25 @@ export default function BoardPage() {
 
   return (
 
-    <div className="min-h-screen bg-gradient-to-br from-slate-800 via-blue-700 to-slate-900 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-800 via-blue-700 to-slate-900 p-3 sm:p-4 md:p-6">
       {/* Header */}
-      <div className="mb-6">
-        <p className="text-2xl font-bold text-white px-3 py-1 rounded">
+      <div className="mb-4 md:mb-6">
+        <p className="text-xl sm:text-2xl font-bold text-white px-2 sm:px-3 py-1 rounded">
           {projectName}
         </p>
       </div>
 
-      {/* Board Lists */}
-      <div className="flex gap-4 overflow-x-auto pb-4 min-h-screen">
+      <div className="flex flex-col md:flex-row gap-3 md:gap-4 md:overflow-x-auto pb-4 min-h-screen">
         {lists.map(list => (
-          <div key={list.id} className="flex-shrink-0 w-72">
-            <div className="bg-black backdrop-blur rounded-lg shadow-xl ">
+          <div key={list.id} className="w-full md:flex-shrink-0 md:w-72 lg:w-80">
+            <div className="bg-black backdrop-blur rounded-lg shadow-xl">
               {/* List Header */}
               <div className="flex items-center justify-between p-3 border-b border-slate-700">
                 <input
                   type="text"
                   value={list.title}
                   onChange={(e) => updateListTitle(list.id, e.target.value)}
-                  className="font-semibold text-white bg-transparent border-none outline-none focus:bg-white/10 px-2 py-1 rounded flex-1 hover:cursor-pointer hover:bg-white/10 transition-colors"
+                  className="font-semibold text-sm sm:text-base text-white bg-transparent border-none outline-none focus:bg-white/10 px-2 py-1 rounded flex-1 hover:cursor-pointer hover:bg-white/10 transition-colors"
                 />
                 <button
                   onClick={() => deleteList(list.id)}
@@ -156,18 +155,18 @@ export default function BoardPage() {
               </div>
 
               {/* Cards */}
-              <div className="max-h-96 overflow-y-auto">
+              <div className="max-h-64 sm:max-h-80 md:max-h-96 overflow-y-auto">
                 {list.cards.map(card => (
                   <div
                     key={card.id}
                     
-                    className="bg-slate-800 p-3 rounded shadow group cursor-pointer transition-colors mx-0.5 my-1 hover:border hover:border-white"
+                    className="bg-slate-800 p-3 rounded shadow group cursor-pointer transition-colors mx-0.5 my-1 hover:border hover:border-white active:bg-slate-700"
                   >
                     <div className="flex items-start justify-between" >
                       <p className="text-white text-sm flex-1" onClick={ () => { setOpenTask(true); setSelectedTaskId(card.id)} }>{card.title}</p>
                       <button
                         onClick={() => deleteCard(list.id, card.id)}
-                        className="text-slate-400 hover:text-white opacity-0 group-hover:opacity-100 transition-opacity ml-2 hover:cursor-pointer"
+                        className="text-slate-400 hover:text-white opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity ml-2 hover:cursor-pointer"
                       >
                         <X size={16} />
                       </button>
@@ -191,7 +190,7 @@ export default function BoardPage() {
                     <div className="flex gap-2">
                       <button
                         onClick={() => addCard(list.id)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded text-sm font-medium transition-colors hover:cursor-pointer"
+                        className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white px-4 py-1.5 rounded text-sm font-medium transition-colors hover:cursor-pointer"
                       >
                         Add card
                       </button>
@@ -206,7 +205,7 @@ export default function BoardPage() {
                 ) : (
                   <button
                     onClick={() => setNewCardInputs({ ...newCardInputs, [list.id]: '' })}
-                    className="flex items-center gap-2 text-slate-300 hover:text-white w-full p-2 hover:bg-slate-700 rounded transition-colors hover:cursor-pointer"
+                    className="flex items-center gap-2 text-slate-300 hover:text-white active:bg-slate-600 w-full p-2 hover:bg-slate-700 rounded transition-colors hover:cursor-pointer"
                   >
                     <Plus size={18} />
                     <span className="text-sm">Add a card</span>
