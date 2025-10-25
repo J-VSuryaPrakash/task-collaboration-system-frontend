@@ -44,12 +44,22 @@ export const getTaskById = async (taskId) => {
   }
 };
 
-export const updateTask = async (taskId, taskDescription) => {
+export const updateTask = async ({taskId, taskDescription, status}) => {
   try {
+
+    const taskUpdatedData = {}
+
+    if(taskDescription !== undefined){
+        taskUpdatedData.taskDescription = taskDescription
+    }
+    if(status !== undefined){
+        taskUpdatedData.status = status
+    }
+
     const res = await axios.post(
       `${BASE_URL}/tasks/update-task`,
 
-      { taskDescription },
+      taskUpdatedData,
       {
         params: { taskId },
         withCredentials: true,

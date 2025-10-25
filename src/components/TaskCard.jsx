@@ -46,7 +46,7 @@ export default function TaskCard() {
     setIsEditingDesc(false);
     async function updateTaskDescription(){
     
-      const res = await updateTask(selectedTaskId, description);
+      const res = await updateTask({taskId: selectedTaskId, taskDescription: description});
       // need to handle the response here and error
 
     }

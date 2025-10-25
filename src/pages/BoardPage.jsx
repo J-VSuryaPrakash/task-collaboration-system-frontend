@@ -1,6 +1,6 @@
-import React, { use, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Plus, MoreHorizontal, X } from 'lucide-react';
-import { addTask, deleteTask, fetchTasks } from '../api/tasks.api';
+import { addTask, deleteTask, fetchTasks, updateTask } from '../api/tasks.api.js';
 import { useParams } from 'react-router-dom';
 import TaskCard from '../components/TaskCard';
 import { useTask } from '../context/task.context.jsx';
@@ -14,7 +14,9 @@ export default function BoardPage() {
   const [done, setDone] = useState([]);
   const [newCardInputs, setNewCardInputs] = useState({});
   const [loading, setLoading] = useState(true);
-  const {openTask,setOpenTask,selectedTaskId,setSelectedTaskId} = useTask();
+  const {openTask, setOpenTask, selectedTaskId, setSelectedTaskId} = useTask();
+  const [draggedCard, setDraggedCard] = useState(null);
+  const [draggedFromList, setDraggedFromList] = useState(null);
 
   useEffect(() => {
 
@@ -51,19 +53,19 @@ export default function BoardPage() {
   },[projectId])
 
   
-    const [lists, setLists] = useState([
+  const [lists, setLists] = useState([
+    { id: 1, title: 'To Do', cards: todo },
+    { id: 2, title: 'In Progress', cards: inProgress },
+    { id: 3, title: 'Done', cards: done }
+  ]);
+
+  useEffect(() => {
+    setLists([
       { id: 1, title: 'To Do', cards: todo },
       { id: 2, title: 'In Progress', cards: inProgress },
       { id: 3, title: 'Done', cards: done }
     ]);
-
-    useEffect(() => {
-      setLists([
-        { id: 1, title: 'To Do', cards: todo },
-        { id: 2, title: 'In Progress', cards: inProgress },
-        { id: 3, title: 'Done', cards: done }
-      ]);
-    }, [todo, inProgress, done]);
+  }, [todo, inProgress, done]);
 
   const addCard = (listId) => {
     const cardText = newCardInputs[listId];
@@ -93,11 +95,11 @@ export default function BoardPage() {
 
   const deleteCard = (listId, cardId) => {
 
-    async function deleteCard(){
+    async function deleteCardAsync(){
       const res = await deleteTask(cardId);
     }
 
-    deleteCard()
+    deleteCardAsync()
 
     setLists(lists.map(list =>
       list.id === listId
@@ -110,6 +112,62 @@ export default function BoardPage() {
     setLists(lists.map(list =>
       list.id === listId ? { ...list, title: newTitle } : list
     ));
+  };
+
+  // Drag and Drop Handlers
+  const handleDragStart = (e, card, listId) => {
+    setDraggedCard(card);
+    setDraggedFromList(listId);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  };
+
+  const handleDrop = async (e, targetListId) => {
+    e.preventDefault();
+    
+    if (!draggedCard || draggedFromList === targetListId) {
+      setDraggedCard(null);
+      setDraggedFromList(null);
+      return;
+    }
+
+    // Determine new status based on target list
+    let newStatus = '';
+    if(targetListId === 1){newStatus = 'Todo'}
+    else if(targetListId === 2){newStatus = 'In Progress'}
+    else if(targetListId === 3){newStatus = 'Done'}
+
+    try {
+      // Update task status in backend
+      await updateTask({taskId: draggedCard.id, status: newStatus });
+
+      // Update local state
+      setLists(lists.map(list => {
+        if (list.id === draggedFromList) {
+          // Remove from source list
+          return { ...list, cards: list.cards.filter(card => card.id !== draggedCard.id) };
+        } else if (list.id === targetListId) {
+          // Add to target list
+          return { ...list, cards: [...list.cards, draggedCard] };
+        }
+        return list;
+      }));
+
+    } catch (error) {
+      console.error('Error updating task status:', error);
+    }
+
+    setDraggedCard(null);
+    setDraggedFromList(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedCard(null);
+    setDraggedFromList(null);
   };
 
   if (loading) {
@@ -136,7 +194,12 @@ export default function BoardPage() {
 
       <div className="flex flex-col md:flex-row gap-3 md:gap-4 md:overflow-x-auto pb-4 min-h-screen">
         {lists.map(list => (
-          <div key={list.id} className="w-full md:flex-shrink-0 md:w-72 lg:w-80">
+          <div 
+            key={list.id} 
+            className="w-full md:flex-shrink-0 md:w-72 lg:w-80"
+            onDragOver={handleDragOver}
+            onDrop={(e) => handleDrop(e, list.id)}
+          >
             <div className="bg-black backdrop-blur rounded-lg shadow-xl">
               {/* List Header */}
               <div className="flex items-center justify-between p-3 border-b border-slate-700">
@@ -147,7 +210,6 @@ export default function BoardPage() {
                   className="font-semibold text-sm sm:text-base text-white bg-transparent border-none outline-none focus:bg-white/10 px-2 py-1 rounded flex-1 hover:cursor-pointer hover:bg-white/10 transition-colors"
                 />
                 <button
-                  onClick={() => deleteList(list.id)}
                   className="text-slate-400 hover:text-white transition-colors ml-2"
                 >
                   <MoreHorizontal size={20} />
@@ -159,13 +221,25 @@ export default function BoardPage() {
                 {list.cards.map(card => (
                   <div
                     key={card.id}
-                    
-                    className="bg-slate-800 p-3 rounded shadow group cursor-pointer transition-colors mx-0.5 my-1 hover:border hover:border-white active:bg-slate-700"
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, card, list.id)}
+                    onDragEnd={handleDragEnd}
+                    className={`bg-slate-800 p-3 rounded shadow group cursor-move transition-all mx-0.5 my-1 hover:border hover:border-white active:bg-slate-700 ${
+                      draggedCard?.id === card.id ? 'opacity-50' : 'opacity-100'
+                    }`}
                   >
-                    <div className="flex items-start justify-between" >
-                      <p className="text-white text-sm flex-1" onClick={ () => { setOpenTask(true); setSelectedTaskId(card.id)} }>{card.title}</p>
+                    <div className="flex items-start justify-between">
+                      <p 
+                        className="text-white text-sm flex-1 cursor-pointer" 
+                        onClick={() => { setOpenTask(true); setSelectedTaskId(card.id)} }
+                      >
+                        {card.title}
+                      </p>
                       <button
-                        onClick={() => deleteCard(list.id, card.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteCard(list.id, card.id);
+                        }}
                         className="text-slate-400 hover:text-white opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity ml-2 hover:cursor-pointer"
                       >
                         <X size={16} />
@@ -184,6 +258,11 @@ export default function BoardPage() {
                       placeholder="Enter a title"
                       value={newCardInputs[list.id] || ''}
                       onChange={(e) => setNewCardInputs({ ...newCardInputs, [list.id]: e.target.value })}
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          addCard(list.id);
+                        }
+                      }}
                       className="w-full bg-slate-700 text-white px-3 py-2 rounded outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                       autoFocus
                     />
